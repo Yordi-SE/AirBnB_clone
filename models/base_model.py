@@ -22,7 +22,7 @@ class BaseModel:
         """This is a magic
         string method
         """
-        m = BaseModel.__name__
+        m = self.__class__.__name__
         return "[{}] ({}) {}".format(m, self.id, self.__dict__)
 
     def save(self):
@@ -36,7 +36,7 @@ class BaseModel:
         dictionary
         """
         my_dict = self.__dict__.copy()
-        my_dict['__class__'] = BaseModel.__name__
+        my_dict['__class__'] = self.__class__.__name__
         my_dict['updated_at'] = self.updated_at.isoformat()
         my_dict['created_at'] = self.created_at.isoformat()
         return my_dict
