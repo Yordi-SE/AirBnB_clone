@@ -3,6 +3,7 @@
 Json to file and from file
 """
 import json
+from models.base_model import BaseModel
 
 
 class FileStorage:
@@ -25,15 +26,18 @@ class FileStorage:
         m = obj.__class__
         s = self.__class__
         key = "{}.{}".format(m.__name__, obj.id)
-        s.__objects[key] = obj.to_dict()
+        s.__objects[key] = obj
 
     def save(self):
         """This method serializes
         __objects to the Json
         """
         m = self.__class__
+        my_dict = m.__objects.copy()
+        for key, value in my_dict.items():
+            my_dict[key] = value.to_dict()
         with open(m.__file_path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(m.__objects))
+            f.write(json.dumps(my_dict))
 
     def reload(self):
         """This method deserializes
@@ -42,6 +46,9 @@ class FileStorage:
         m = self.__class__
         try:
             with open(m.__file_path, 'r', encoding='utf-8') as f:
-                m.__objects = json.loads(f.read())
-        except Exception:
+                my_dict = json.loads(f.read())
+                for values in my_dict.values():
+                    name = values['__class__']
+                    self.new(eval(name)(**values))
+        except FileNotFoundError:
             pass
