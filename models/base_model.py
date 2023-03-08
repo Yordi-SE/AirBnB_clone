@@ -2,7 +2,7 @@
 """This module contains the defination of
 BaseModel class
 """
-import datetime
+from datetime import datetime
 import uuid
 
 
@@ -10,13 +10,22 @@ class BaseModel:
     """This is body of the
     class
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """This is the constructor of
         the class
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.datetime.today()
-        self.updated_at = datetime.datetime.today()
+        if kwargs:
+            for ky, value in kwargs.items():
+                if ky == '__class__':
+                    continue
+                elif ky == 'created_at' or ky == 'updated_at':
+                    self.__dict__[ky] = datetime.fromisoformat(value)
+                else:
+                    self.__dict__[ky] = value
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.today()
+            self.updated_at = datetime.today()
 
     def __str__(self):
         """This is a magic
@@ -29,7 +38,7 @@ class BaseModel:
         """This method is used to
         update the updated_at attribute
         """
-        self.updated_at = datetime.datetime.now()
+        self.updated_at = datetime.now()
 
     def to_dict(self):
         """This method returns
