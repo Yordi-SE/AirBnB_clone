@@ -4,6 +4,7 @@ of console class
 """
 import cmd
 import re
+from models.user import User
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
 from models import storage
@@ -105,8 +106,9 @@ class HBNBCommand(cmd.Cmd):
                 name = eval(cl).__name__
                 storage.reload()
                 my_dict = storage.all()
-                for values in my_dict.values():
-                    print(values)
+                for keys, values in my_dict.items():
+                    if name in keys:
+                        print(values)
             except NameError:
                 print("** class doesn't exist **")
         else:
@@ -126,7 +128,6 @@ class HBNBCommand(cmd.Cmd):
                 idd = tokens[1]
                 att = tokens[2]
                 attrv = tokens[3]
-                print(attrv)
             elif len(tokens) == 3:
                 cll = tokens[0]
                 idd = tokens[1]
